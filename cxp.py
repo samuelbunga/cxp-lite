@@ -1,18 +1,22 @@
-import numpy as np
-import pandas as pd
 import os
 import sys
 import csv
-from collections import OrderedDict
+import cv2
+import shutil
+import random
+import scipy.misc
+import numpy as np
+import pandas as pd
+import tkMessageBox
 import Tkinter as tk
 from Tkinter import *
-import tkFileDialog, tkFont
-import tkMessageBox
 import tifffile as tiff
-import scipy.misc
-import shutil
-import cv2
-import random
+import tkFileDialog, tkFont
+from collections import OrderedDict
+
+
+
+
 
 
 def extract_timeseries(input_file, mask_file, output_dir, output_basename):
