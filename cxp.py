@@ -421,7 +421,7 @@ def extractFeatures(ts, ts_bg, output_dir, output_basename):
 ####### GUI ###########
 # Global vars
 global input_folder
-input_folder = ''
+input_folder = __file__
 
 # helper functions
 def selectInputFolder():
