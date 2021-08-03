@@ -1,4 +1,3 @@
-# cxp-lite
 ![cellxpedite](img/cellxpedite_logo.png "CELLXPEDITE")
 
 Profiling Neuronal Activity from Fluorescence Imaging Data
