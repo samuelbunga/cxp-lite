@@ -220,7 +220,7 @@ def plotIndividualDetrendedSignal(s, s_detrended, s_id, output_dir, filename_pre
 	plt.close()
 
 
-def get_peak_indices(s, window_size=151, min_peak_height=2, min_peak_distance=50, noise_threshold=0.08):
+def get_peak_indices(s, window_size, frame_window, min_peak_height=2, min_peak_distance=50, noise_threshold=0.08):
     # smooth and clip differenced signal to 0 [diff => x(t) = x(t) - x(t-1)]
     # (this removes one from all indices as first data point is dropped, -1)
     signal = smooth_signal(np.diff(s), span=window_size)
@@ -269,7 +269,7 @@ def get_peak_indices(s, window_size=151, min_peak_height=2, min_peak_distance=50
 
     # reorder peak indices and filter out those below noise threshold or within last 100 data points
     filtered_peak_indices = [p for p in sorted(list(filtered_peak_indices)) 
-                             if (s[p] > noise_threshold) and (p < len(s) - 100)]
+                             if (s[p] > noise_threshold) and (p < len(s))]
     
     return filtered_peak_indices
 
@@ -324,6 +324,7 @@ def extractFeatures(ts, ts_bg, output_dir, output_basename):
 	baseline_smooth_span = int(baseline_smoothing_entry.get())
 	firstk = int(firstk_entry.get())
 
+
 	# initialize output variables
 	peaks = np.zeros(len(ts))
 	amplitudes = np.zeros(len(ts))
@@ -354,7 +355,8 @@ def extractFeatures(ts, ts_bg, output_dir, output_basename):
 			window_size=int(peak_window_entry.get()), 
 			min_peak_height=float(min_peak_height_entry.get()), 
 			min_peak_distance=int(min_peak_dist_entry.get()),
-			noise_threshold=float(noise_threshold_entry.get())
+			noise_threshold=float(noise_threshold_entry.get()),
+            frame_window=firstk
 		)
 
 		# plot signal
@@ -479,7 +481,10 @@ def start():
 					os.makedirs(output_dir)
 
 				# extract time series
-				fragmentsTimeSeries, background_intensity = extract_timeseries(img_file, mask_file, output_dir, output_basename)
+				fragmentsTimeSeries, background_intensity = extract_timeseries(img_file, 
+					mask_file, 
+					output_dir, 
+					output_basename)
 
 				# compute time series features
 				df_features = extractFeatures(fragmentsTimeSeries, background_intensity, output_dir, output_basename)
@@ -544,7 +549,7 @@ selectedFileLabel.grid(row=0, column=1, columnspan=5, sticky=W, padx=xpadding)
 firstk_label = Label(mainFrame, text="Start at frame", bg=bgColor, font=font_output)
 firstk_label.grid(row=3, column=0, sticky=W)
 firstk_entry = Entry(mainFrame, width=btnWidth)
-firstk_entry.insert(END, '500')
+firstk_entry.insert(END, '50')
 firstk_entry.grid(row=3, column=1, sticky=W, padx=xpadding)
 
 # smoothing params
@@ -584,7 +589,7 @@ baseline_fg_color = '#de5c00'
 baseline_window_label = Label(mainFrame, text="Baseline window", bg=bgColor, font=font_output, fg=baseline_fg_color)
 baseline_window_label.grid(row=3, column=2, sticky=W)
 baseline_window_entry = Entry(mainFrame, width=btnWidth)
-baseline_window_entry.insert(END, '100')
+baseline_window_entry.insert(END, '10')
 baseline_window_entry.grid(row=3, column=3, sticky=W, padx=xpadding)
 
 baseline_quantile_label = Label(mainFrame, text="Baseline quantile", bg=bgColor, font=font_output, fg=baseline_fg_color)
@@ -596,7 +601,7 @@ baseline_quantile_entry.grid(row=4, column=3, sticky=W, padx=xpadding)
 baseline_smoothing_label = Label(mainFrame, text="Baseline smoothing", bg=bgColor, font=font_output, fg=baseline_fg_color)
 baseline_smoothing_label.grid(row=5, column=2, sticky=W)
 baseline_smoothing_entry = Entry(mainFrame, width=btnWidth)
-baseline_smoothing_entry.insert(END, '100')
+baseline_smoothing_entry.insert(END, '10')
 baseline_smoothing_entry.grid(row=5, column=3, sticky=W, padx=xpadding)
 
 # analysis params
@@ -610,13 +615,13 @@ noise_threshold_entry.grid(row=6, column=3, sticky=W, padx=xpadding)
 min_peak_dist_label = Label(mainFrame, text="Peak distance", bg=bgColor, font=font_output, fg=peak_fg_color)
 min_peak_dist_label.grid(row=7, column=2, sticky=W)
 min_peak_dist_entry = Entry(mainFrame, width=btnWidth)
-min_peak_dist_entry.insert(END, '50')
+min_peak_dist_entry.insert(END, '5')
 min_peak_dist_entry.grid(row=7, column=3, sticky=W, padx=xpadding)
 
 peak_window_label = Label(mainFrame, text="Peak window", bg=bgColor, font=font_output, fg=peak_fg_color)
 peak_window_label.grid(row=8, column=2, sticky=W)
 peak_window_entry = Entry(mainFrame, width=btnWidth)
-peak_window_entry.insert(END, '100')
+peak_window_entry.insert(END, '10')
 peak_window_entry.grid(row=8, column=3, sticky=W, padx=xpadding)
 
 min_peak_height_label = Label(mainFrame, text="Peak height", bg=bgColor, font=font_output, fg=peak_fg_color)
