@@ -6,7 +6,7 @@ from os import listdir
 from os.path import join
 from collections import defaultdict
 
-def aggregate_fetures(input_dir):
+def aggregate_features(input_dir):
     # Read the input directory for outputs
     output_dirs = [d for d in listdir(input_dir) 
                    if d.startswith('output')]
