@@ -13,7 +13,7 @@ from Tkinter import *
 import tifffile as tiff
 import tkFileDialog, tkFont
 from collections import OrderedDict
-
+from cxp.aggregate_features import aggregate_features
 
 
 
@@ -495,7 +495,6 @@ def start():
 				errors = True
                 
 		# aggregate features
-		from cxp.aggregate_features import aggregate_features
 		aggregate_features(input_folder)
         
 		# re-enable start button
