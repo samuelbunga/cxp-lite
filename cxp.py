@@ -493,7 +493,12 @@ def start():
 				df_features.to_csv(os.path.join(output_dir, output_basename + "_features.csv"), index=False)
 			except:
 				errors = True
-
+                
+		# aggregate features
+		from cxp.aggregate_features import aggregate_features
+		aggregate_features(input_folder)
+        
+		# re-enable start button
 		# output message
 		if errors:
 			output_status = 'Complete'
@@ -510,7 +515,6 @@ def start():
 		print(traceback.format_exc())
 		tkMessageBox.showwarning("Error", "An error occured during the analysis:\n\n" + str(e))
 	finally:
-		# re-enable start button
 		startButton.config(state="normal")
 
 
