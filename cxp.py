@@ -2,6 +2,7 @@ import os
 import sys
 import csv
 import cv2
+import time
 import shutil
 import random
 import scipy.misc
@@ -531,6 +532,11 @@ root.resizable(width=False, height=False)
 root.geometry('545x290')  # width x height
 root.config(bg=bgColor)
 
+# Progress bar widget
+progress = Progressbar(root, orient = HORIZONTAL,
+                       length = 100, mode = 'determinate')
+
+
 # fonts
 font_buttons = tkFont.Font(root=root, family='Arial', size=14, weight='bold')
 font_labels = tkFont.Font(root=root, family='Arial', size=14, weight='bold')
@@ -646,6 +652,7 @@ startButton.grid(row=13, column=0, pady=10, sticky=W)
 exitButton = Button(mainFrame, text='Exit', command=root.quit, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
 exitButton.grid(row=13, column=1, pady=10, sticky=E)
 
+
 # pack main frame
 mainFrame.pack(fill='both')
 
@@ -658,6 +665,7 @@ def fix():
     root.geometry('%dx%d' % (w+1,h+1))
 root.update()
 root.after(0, fix)
+
 
 # start gui
 root.mainloop()
