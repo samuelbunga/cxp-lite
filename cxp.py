@@ -5,6 +5,7 @@ import cv2
 import time
 import shutil
 import random
+import threading
 import scipy.misc
 import numpy as np
 import pandas as pd
@@ -447,6 +448,9 @@ def start():
 		if input_folder == '' or input_folder == 'no folder selected': 
 			tkMessageBox.showwarning("Missing user input", "An input folder must be selected.")
 			return
+		progress['value'] = 20
+		root.update_idletasks()
+		time.sleep(1)
 
 		# identify image files
 		mask_suffix = '_mask'
@@ -498,6 +502,10 @@ def start():
                 
 		# aggregate features
 		aggregate_features(input_folder)
+		progress['value'] = 80
+		root.update_idletasks()
+		time.sleep(1)
+		progress['value'] = 100
         
 		# re-enable start button
 		# output message
@@ -532,9 +540,7 @@ root.resizable(width=False, height=False)
 root.geometry('545x290')  # width x height
 root.config(bg=bgColor)
 
-# Progress bar widget
-progress = Progressbar(root, orient = HORIZONTAL,
-                       length = 100, mode = 'determinate')
+
 
 
 # fonts
@@ -545,6 +551,10 @@ font_filenames = tkFont.Font(root=root, family='Arial', size=12)
 
 # MAIN FRAME
 mainFrame = Frame(root, bg=bgColor, padx=10, pady=15)
+
+# Progress bar widget
+progress = Progressbar(mainFrame, orient = HORIZONTAL,
+                       length = 100, mode = 'determinate')
 
 # input file selection
 selectFileBtn = Button(mainFrame, text='Select folder', command=selectInputFolder, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
@@ -651,7 +661,8 @@ startButton.grid(row=13, column=0, pady=10, sticky=W)
 # exit button
 exitButton = Button(mainFrame, text='Exit', command=root.quit, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
 exitButton.grid(row=13, column=1, pady=10, sticky=E)
-
+#Progress bar
+progress.grid(row=13, column=2, pady=10, sticky=SE)
 
 # pack main frame
 mainFrame.pack(fill='both')
