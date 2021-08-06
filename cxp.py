@@ -12,6 +12,7 @@ import Tkinter as tk
 from Tkinter import *
 import tifffile as tiff
 import tkFileDialog, tkFont
+from ttk import Progressbar
 from collections import OrderedDict
 from cxp.aggregate_features import aggregate_features
 
