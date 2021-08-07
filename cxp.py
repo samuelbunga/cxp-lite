@@ -458,7 +458,9 @@ def start():
 		img_files = [os.path.join(input_folder,f) for f in os.listdir(input_folder)
 				if (os.path.isfile(os.path.join(input_folder,f)) 
 					and f != '.DS_Store'
-					and mask_suffix not in f)]
+					and mask_suffix not in f
+					and re.search(r".*.tif[f]?", f))
+					]
 
 		# ensure input folder is not empty
 		if len(img_files) == 0: 
