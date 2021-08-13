@@ -14,7 +14,7 @@ import tifffile as tiff
 from ttk import Progressbar
 from collections import OrderedDict
 from cxp.aggregate_features import aggregate_features
-
+import ttk
 import tkMessageBox
 import Tkinter as tk
 import tkFileDialog, tkFont
@@ -527,6 +527,7 @@ def start():
 			output_message = 'Data extraction completed successfully.'
 			tkMessageBox.showinfo(output_status, output_message)
 
+
 	except Exception as e:
 		# display error to user and console
 		import traceback
@@ -545,8 +546,8 @@ xpadding = (10,5)
 # initialize interface
 root = tk.Tk()
 root.title('CXP')
-root.resizable(width=False, height=False)
-root.geometry('545x350')  # width x height
+root.resizable(width=True, height=True)
+root.geometry('600x350')  # width x height
 root.config(bg=bgColor)
 
 
@@ -559,11 +560,25 @@ font_output = tkFont.Font(root=root, family='Arial', size=14)
 font_filenames = tkFont.Font(root=root, family='Arial', size=12)
 
 # MAIN FRAME
-mainFrame = Frame(root, bg=bgColor, padx=10, pady=15)
+mainFrame = Frame(root, bg=bgColor, padx=10, pady=10)
+
+
+# PROGRESSBAR FRAME
+#progressFrame = Frame(mainFrame)
+
+
 
 # Progress bar widget
-progress = Progressbar(mainFrame, orient = HORIZONTAL,
-                       length = 100, mode = 'determinate')
+# Set Progressbar style
+s = ttk.Style()
+s.theme_use('clam')
+s.configure("red.Horizontal.TProgressbar", foreground='red', background='red')
+progress = Progressbar(mainFrame, style="red.Horizontal.TProgressbar", 
+                       orient = HORIZONTAL,
+                       length = 500, maximum=100, cursor='coffee_mug',
+                       mode = 'determinate').grid(row=14, column=0, columnspan=10)
+
+
 
 # input file selection
 selectFileBtn = Button(mainFrame, text='Select folder', command=selectInputFolder, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
@@ -677,11 +692,12 @@ startButton.grid(row=13, column=0, pady=10, sticky=W)
 # exit button
 exitButton = Button(mainFrame, text='Exit', command=root.quit, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
 exitButton.grid(row=13, column=1, pady=10, sticky=E)
-#Progress bar
-progress.grid(row=13, column=2, pady=10, sticky=SE)
+
 
 # pack main frame
 mainFrame.pack(fill='both')
+
+
 
 # tmp fix for buttons not displaying properly
 def fix():
