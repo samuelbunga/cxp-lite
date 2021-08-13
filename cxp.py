@@ -9,16 +9,15 @@ import threading
 import scipy.misc
 import numpy as np
 import pandas as pd
-import tkMessageBox
-import Tkinter as tk
 from Tkinter import *
 import tifffile as tiff
-import tkFileDialog, tkFont
 from ttk import Progressbar
 from collections import OrderedDict
 from cxp.aggregate_features import aggregate_features
 
-
+import tkMessageBox
+import Tkinter as tk
+import tkFileDialog, tkFont
 
 
 
@@ -436,6 +435,14 @@ def selectInputFolder():
 		input_folder = selectedFolder
 		input_folder_basename = os.path.basename(selectedFolder)
 		inputSelectedVar.set(input_folder_basename[:65])
+        
+def selectOutputFolder():
+	selectedFolder = tkFileDialog.askdirectory(title="Select output folder", initialdir='.')
+	if selectedFolder:
+		global output_folder
+		input_folder = selectedFolder
+		input_folder_basename = os.path.basename(selectedFolder)
+		inputSelectedVar.set(input_folder_basename[:65])
 
 def start():
 	try:
@@ -561,11 +568,18 @@ progress = Progressbar(mainFrame, orient = HORIZONTAL,
 # input file selection
 selectFileBtn = Button(mainFrame, text='Select folder', command=selectInputFolder, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
 selectFileBtn.grid(row=0, column=0, sticky=W)
+
 # label for selected folder
 inputSelectedVar = StringVar()
 inputSelectedVar.set('no folder selected') 
 selectedFileLabel = Label(mainFrame, textvariable=inputSelectedVar, bg=bgColor, font=font_filenames)
 selectedFileLabel.grid(row=0, column=1, columnspan=5, sticky=W, padx=xpadding)
+
+# output file selection
+selectFileBtn = Button(mainFrame, text='Output folder', command=selectInputFolder, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
+selectFileBtn.grid(row=1, column=0, sticky=W)
+
+
 
 # analysis params
 firstk_label = Label(mainFrame, text="Start at frame", bg=bgColor, font=font_output)
