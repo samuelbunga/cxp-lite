@@ -546,7 +546,7 @@ xpadding = (10,5)
 root = tk.Tk()
 root.title('CXP')
 root.resizable(width=False, height=False)
-root.geometry('545x290')  # width x height
+root.geometry('545x350')  # width x height
 root.config(bg=bgColor)
 
 
