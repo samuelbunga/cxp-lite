@@ -551,6 +551,11 @@ root.geometry('550x330')  # width x height
 root.config(bg=bgColor)
 
 
+root.tk.call('wm', 'iconphoto', root._w, tk.PhotoImage(file=os.path.join(os.path.dirname(os.path.realpath(__file__)), 
+                                   'img', 'cellxpedite_logo.png')))
+
+
+
 
 
 # fonts
