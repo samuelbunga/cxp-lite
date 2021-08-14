@@ -546,8 +546,8 @@ xpadding = (10,5)
 # initialize interface
 root = tk.Tk()
 root.title('CXP')
-root.resizable(width=True, height=True)
-root.geometry('600x350')  # width x height
+root.resizable(width=False, height=False)
+root.geometry('550x330')  # width x height
 root.config(bg=bgColor)
 
 
@@ -563,10 +563,6 @@ font_filenames = tkFont.Font(root=root, family='Arial', size=12)
 mainFrame = Frame(root, bg=bgColor, padx=10, pady=10)
 
 
-# PROGRESSBAR FRAME
-#progressFrame = Frame(mainFrame)
-
-
 
 # Progress bar widget
 # Set Progressbar style
@@ -575,8 +571,8 @@ s.theme_use('clam')
 s.configure("red.Horizontal.TProgressbar", foreground='red', background='red')
 progress = Progressbar(mainFrame, style="red.Horizontal.TProgressbar", 
                        orient = HORIZONTAL,
-                       length = 500, maximum=100, cursor='coffee_mug',
-                       mode = 'determinate').grid(row=14, column=0, columnspan=10)
+                       length = 530, maximum=100, cursor='coffee_mug',
+                       mode = 'determinate').grid(row=14, column=0, columnspan=10,sticky=W)
 
 
 
@@ -688,10 +684,10 @@ savesignal_checkbox.grid(row=9, column=0, columnspan=2, sticky=W)  # pady=(5,0)
 
 # start analysis
 startButton = Button(mainFrame, text='Start', command=start, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
-startButton.grid(row=13, column=0, pady=10, sticky=W)
+startButton.grid(row=13, column=0, pady=xpadding, sticky=W)
 # exit button
 exitButton = Button(mainFrame, text='Exit', command=root.quit, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
-exitButton.grid(row=13, column=1, pady=10, sticky=E)
+exitButton.grid(row=13, column=1, pady=xpadding, sticky=E)
 
 
 # pack main frame
