@@ -455,7 +455,7 @@ def start():
 		if input_folder == '' or input_folder == 'no folder selected': 
 			tkMessageBox.showwarning("Missing user input", "An input folder must be selected.")
 			return
-		progress['value'] = 20
+		progress['value'] = 10
 		root.update_idletasks()
 		time.sleep(1)
 
@@ -511,10 +511,11 @@ def start():
                 
 		# aggregate features
 		aggregate_features(input_folder)
-		progress['value'] = 80
+		progress['value'] = 70
 		root.update_idletasks()
 		time.sleep(1)
 		progress['value'] = 100
+		root.update_idletasks()
         
 		# re-enable start button
 		# output message
@@ -526,6 +527,7 @@ def start():
 			output_status = 'Success'
 			output_message = 'Data extraction completed successfully.'
 			tkMessageBox.showinfo(output_status, output_message)
+			progress.stop()
 
 
 	except Exception as e:
@@ -573,14 +575,18 @@ mainFrame = Frame(root, bg=bgColor, padx=10, pady=10)
 # Set Progressbar style
 s = ttk.Style()
 s.theme_use('clam')
-s.configure("red.Horizontal.TProgressbar", foreground='red', background='red')
-progress = Progressbar(mainFrame, style="red.Horizontal.TProgressbar", 
+s.configure("red.Horizontal.TProgressbar", foreground='#39FF14', background='#39FF14')
+progress = Progressbar(mainFrame,
+                       style= "red.Horizontal.TProgressbar",
                        orient = HORIZONTAL,
-                       length = 530, maximum=100, cursor='coffee_mug',
-                       mode = 'determinate').grid(row=14, column=0, columnspan=10,sticky=W)
+                       length = 530,
+                       maximum=100,
+                       cursor='coffee_mug',
+                       mode = 'determinate')
+progress.grid(row=14, column=0, columnspan=10,sticky=W)
 
 
-
+print(progress)
 # input file selection
 selectFileBtn = Button(mainFrame, text='Select folder', command=selectInputFolder, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
 selectFileBtn.grid(row=0, column=0, sticky=W)
