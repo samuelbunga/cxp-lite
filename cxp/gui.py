@@ -1,3 +1,130 @@
+# -*- coding: utf-8 -*-
+
+import os
+import sys
+import csv
+import cv2
+import ttk
+import tkFont
+import Tkinter as tk
+from Tkinter import *
+from ttk import Progressbar
+
+
+# helper functions
+def selectInputFolder():
+    selectedFolder = tkFileDialog.askdirectory(title="Select input folder", initialdir='.')
+    if selectedFolder:
+        global input_folder
+        input_folder = selectedFolder
+        input_folder_basename = os.path.basename(selectedFolder)
+        inputSelectedVar.set(input_folder_basename[:65])
+
+
+def selectOutputFolder():
+    selectedFolder = tkFileDialog.askdirectory(title="Select output folder", initialdir='.')
+    if selectedFolder:
+        global output_folder
+        input_folder = selectedFolder
+        input_folder_basename = os.path.basename(selectedFolder)
+        inputSelectedVar.set(input_folder_basename[:65])
+
+
+def start():
+    try:
+        global input_folder
+
+        # disable start button to prevent multiple clicks
+        startButton.config(state="disabled")
+
+        # ensure input folder is specified
+        if input_folder == '' or input_folder == 'no folder selected':
+            tkMessageBox.showwarning("Missing user input", "An input folder must be selected.")
+            return
+        progress['value'] = 10
+        root.update_idletasks()
+        time.sleep(1)
+
+        # identify image files
+        mask_suffix = '_mask'
+        mask_file_ext = '.tiff'
+        img_files = [os.path.join(input_folder, f) for f in os.listdir(input_folder)
+                     if (os.path.isfile(os.path.join(input_folder, f))
+                         and f != '.DS_Store'
+                         and mask_suffix not in f
+                         and re.search(r".*.tif[f]?", f))
+                     ]
+
+        # ensure input folder is not empty
+        if len(img_files) == 0:
+            tkMessageBox.showwarning("Missing data", "The input folder is empty.")
+            return
+
+        # match (img_stack, mask); ensure all mask files exist
+        data = []
+        for img_file in img_files:
+            img_filename, img_file_extension = os.path.splitext(img_file)
+            mask_file = img_filename + mask_suffix + mask_file_ext
+            if os.path.isfile(mask_file):
+                data.append((img_file, mask_file))
+            else:
+                tkMessageBox.showwarning("Missing data", "Missing mask file: \n\n" + mask_file)
+                return
+
+        # analyze each pair of files (img stack, mask)
+        errors = False
+        for img_file, mask_file in data:
+            try:
+                # create new output directory
+                output_basename = os.path.basename(os.path.splitext(img_file)[0])
+                output_dir = os.path.join(input_folder, 'output_' + output_basename)
+                if not os.path.exists(output_dir):
+                    os.makedirs(output_dir)
+
+                # extract time series
+                fragmentsTimeSeries, background_intensity = extract_timeseries(img_file,
+                                                                               mask_file,
+                                                                               output_dir,
+                                                                               output_basename)
+
+                # compute time series features
+                df_features = extractFeatures(fragmentsTimeSeries, background_intensity, output_dir, output_basename)
+
+                # save df_features
+                df_features.to_csv(os.path.join(output_dir, output_basename + "_features.csv"), index=False)
+            except:
+                errors = True
+
+        # aggregate features
+        aggregate_features(input_folder)
+        progress['value'] = 70
+        root.update_idletasks()
+        time.sleep(1)
+        progress['value'] = 100
+        root.update_idletasks()
+
+        # re-enable start button
+        # output message
+        if errors:
+            output_status = 'Complete'
+            output_message = 'Data extraction completed, but some files could not be analyzed.'
+            tkMessageBox.showwarning(output_status, output_message)
+        else:
+            output_status = 'Success'
+            output_message = 'Data extraction completed successfully.'
+            tkMessageBox.showinfo(output_status, output_message)
+            progress.stop()
+
+
+    except Exception as e:
+        # display error to user and console
+        import traceback
+        print(traceback.format_exc())
+        tkMessageBox.showwarning("Error", "An error occured during the analysis:\n\n" + str(e))
+    finally:
+        startButton.config(state="normal")
+
+
 # GUI frames
 # params for interface
 bgColor = '#d8d8d8'
@@ -13,7 +140,7 @@ root.config(bg=bgColor)
 
 
 root.tk.call('wm', 'iconphoto', root._w, tk.PhotoImage(file=os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                   'img', 'cellxpedite_logo.png')))
+                                   '../img', 'cellxpedite_logo.png')))
 
 
 
