@@ -448,7 +448,7 @@ def selectInputFolder():
         global input_folder
         input_folder = selectedFolder
         input_folder_basename = os.path.basename(selectedFolder)
-        inputSelectedVar.set(input_folder_basename[:65])
+        inputSelectedVar.set(os.path.realpath(input_folder))
 
 
 def selectOutputFolder():
@@ -507,7 +507,7 @@ def start():
             try:
                 # create new output directory
                 output_basename = os.path.basename(os.path.splitext(img_file)[0])
-                output_dir = os.path.join(input_folder, 'output_' + output_basename)
+                output_dir = os.path.join(output_folder, 'output_' + output_basename)
                 if not os.path.exists(output_dir):
                     os.makedirs(output_dir)
 
