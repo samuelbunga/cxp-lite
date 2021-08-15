@@ -455,9 +455,9 @@ def selectOutputFolder():
     selectedFolder = tkFileDialog.askdirectory(title="Select output folder", initialdir='.')
     if selectedFolder:
         global output_folder
-        input_folder = selectedFolder
-        input_folder_basename = os.path.basename(selectedFolder)
-        inputSelectedVar.set(input_folder_basename[:65])
+        output_folder = selectedFolder
+        output_folder = os.path.realpath(selectedFolder)
+        outputSelectedVar.set(output_folder)
 
 
 def start():
@@ -595,19 +595,24 @@ progress.grid(row=14, column=0, columnspan=10,sticky=W)
 
 
 # input file selection
-selectFileBtn = Button(mainFrame, text='Select folder', command=selectInputFolder, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
-selectFileBtn.grid(row=0, column=0, sticky=W)
+selectInFileBtn = Button(mainFrame, text='Select folder', command=selectInputFolder, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
+selectInFileBtn.grid(row=0, column=0, sticky=W)
 
 # label for selected folder
 inputSelectedVar = StringVar()
-inputSelectedVar.set('no folder selected')
+inputSelectedVar.set('')
 selectedFileLabel = Label(mainFrame, textvariable=inputSelectedVar, bg=bgColor, font=font_filenames)
 selectedFileLabel.grid(row=0, column=1, columnspan=5, sticky=W, padx=xpadding)
 
 # output file selection
-selectFileBtn = Button(mainFrame, text='Output folder', command=selectInputFolder, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
-selectFileBtn.grid(row=1, column=0, sticky=W)
+selectOutFileBtn = Button(mainFrame, text='Output folder', command=selectOutputFolder, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
+selectOutFileBtn.grid(row=1, column=0, sticky=W)
 
+# label for selected folder
+outputSelectedVar = StringVar()
+outputSelectedVar.set('')
+selectedOutputFileLabel = Label(mainFrame, textvariable=outputSelectedVar, bg=bgColor, font=font_filenames)
+selectedOutputFileLabel.grid(row=1, column=1, columnspan=5, sticky=W, padx=xpadding)
 
 
 # analysis params
