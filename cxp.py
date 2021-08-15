@@ -4,19 +4,19 @@ import os
 import ttk
 import time
 import tkFont
-import tkMessageBox
-import tkFileDialog
-import Tkinter as tk
-from Tkinter import *
-from ttk import Progressbar
-from cxp.aggregate_features import aggregate_features
-
 import random
 import scipy.misc
 import numpy as np
+import tkMessageBox
+import tkFileDialog
 import pandas as pd
+import Tkinter as tk
+from Tkinter import *
 import tifffile as tiff
+from ttk import Progressbar
 from collections import OrderedDict
+from cxp.aggregate_features import aggregate_features
+
 
 
 
