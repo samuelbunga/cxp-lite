@@ -7,25 +7,26 @@ from os import listdir
 from os.path import join
 from collections import defaultdict
 
-def aggregate_features(input_dir):
-    writer = pd.ExcelWriter(join(input_dir, 'aggregated_features.xlsx'))
+def aggregate_features(output_dir):
+    writer = pd.ExcelWriter(join(output_dir, 'aggregated_features.xlsx'))
+
     # Read the input directory for outputs
-    output_dirs = [d for d in listdir(input_dir) 
+    output_dirs = [d for d in listdir(output_dir)
                    if d.startswith('output')]
     # Reading features csv
     for f in output_dirs:
-        features_csv = [j for j in listdir(join(input_dir, f)) 
+        features_csv = [j for j in listdir(join(output_dir, f))
                         if re.search(r'.*features.csv', j)][0]
-        features_df = pd.read_csv(join(input_dir, f, features_csv))
+        features_df = pd.read_csv(join(output_dir, f, features_csv))
     # read each features file and aggregate information
     # into a dictionary
     peak_count = {}
     amplitude = {}
     auc = {}
     for f in output_dirs:
-        features_csv = [j for j in listdir(join(input_dir, f)) 
+        features_csv = [j for j in listdir(join(output_dir, f))
                         if re.search(r'.*features.csv', j)][0]
-        features_df = pd.read_csv(join(input_dir, f, features_csv))
+        features_df = pd.read_csv(join(output_dir, f, features_csv))
         for r,c in features_df.iterrows() :
             if c[1] in peak_count:
                 peak_count[c[1]].update({'cell_id':r+1, c[0]:c[2]})

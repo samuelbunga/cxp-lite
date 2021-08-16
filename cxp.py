@@ -507,6 +507,7 @@ def start():
             try:
                 # create new output directory
                 output_basename = os.path.basename(os.path.splitext(img_file)[0])
+                output_basename = re.search(r'(.*Timelapse_)([A-Z]\d+)(_.*)', output_basename).group(2)
                 output_dir = os.path.join(output_folder, 'output_' + output_basename)
                 if not os.path.exists(output_dir):
                     os.makedirs(output_dir)
@@ -526,7 +527,7 @@ def start():
                 errors = True
 
         # aggregate features
-        aggregate_features(input_folder)
+        aggregate_features(output_dir)
         progress['value'] = 70
         root.update_idletasks()
         time.sleep(1)
@@ -708,6 +709,7 @@ savesignal_checkbox.grid(row=9, column=0, columnspan=2, sticky=W)  # pady=(5,0)
 # start analysis
 startButton = Button(mainFrame, text='Start', command=start, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
 startButton.grid(row=13, column=0, pady=xpadding, sticky=W)
+
 # exit button
 exitButton = Button(mainFrame, text='Exit', command=root.quit, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
 exitButton.grid(row=13, column=1, pady=xpadding, sticky=E)
