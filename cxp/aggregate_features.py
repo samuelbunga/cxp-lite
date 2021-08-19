@@ -63,9 +63,11 @@ def _xlsx_to_df(sheets):
     return Dfs
 
 
-def _calculate_avg_wells(Dfs, output_dir):
+def _calculate_avg_active_wells(Dfs, output_dir):
     count = int(0)
-    writer = pd.ExcelWriter(join(output_dir, 'features_average.xlsx'))
+    avg_wells = pd.ExcelWriter(join(output_dir, 'average_wells.xlsx'))
+    active_wells = pd.ExcelWriter(join(output_dir, 'active_wells.xlsx'))
+
     for df in Dfs:
         # Get unique well ids
         well_id = sorted(set(re.search(r"\d+", i).group() for i in df.columns.values))
@@ -75,18 +77,24 @@ def _calculate_avg_wells(Dfs, output_dir):
         col_names = [str(i) for i in well_id]
         row_names = well_name
 
-        # Create a empty dataframe
-        e_df = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
+        # Create a empty dataframe from active and average wells
+        active_df = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
+        avg_df = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
         # Fill empty values with 0
-        e_df.fillna(0)
+        active_df.fillna(0)
+        avg_df.fillna(0)
 
-        # Calculate avergage
+        # Calculate average wells / active wells
         for c in df.columns.values:
-            e_df[c[1:]][c[0]] = df[c].mean()
+            avg_df[c[1:]][c[0]] = df[c].mean()
+            active_df[c[1:]][c[0]] = len([a for a in df[c] if a > 0])
 
-        e_df.to_excel(writer, sheet_name=sheet_names[count], header=True, index=True)
+
+        avg_df.to_excel(avg_wells, sheet_name=sheet_names[count], header=True, index=True)
+        active_df.to_excel(active_wells, sheet_name=sheet_names[count], header=True, index=True)
         count += 1
-    writer.save()
+    avg_wells.save()
+    active_wells.save()
 
 
 def aggregate_wells(output_dir):
@@ -103,6 +111,4 @@ def aggregate_wells(output_dir):
     sheets = [peaks, amplitude, auc]
 
     Dfs = _xlsx_to_df(sheets)
-    _calculate_avg_wells(Dfs, output_dir)
-
-
+    _calculate_avg_active_wells(Dfs, output_dir)
