@@ -63,20 +63,9 @@ def _xlsx_to_df(sheets):
     return Dfs
 
 
-def aggregate_wells(output_dir):
-    fname = join(output_dir, 'aggregated_features.xlsx')
-    writer = pd.ExcelWriter(join(output_dir, 'features_average.xlsx'))
-    wb = openpyxl.load_workbook(filename=fname, data_only=True)
-
-    # Extract sheets
-    peaks = wb['Peaks']
-    amplitude = wb['Amplitude']
-    auc = wb['Auc']
-    sheet_names = ['Peaks', 'Amplitude', 'AUC']
-    sheets = [peaks, amplitude, auc]
-
-    Dfs = _xlsx_to_df(sheets)
+def _calculate_avg_wells(Dfs, output_dir):
     count = int(0)
+    writer = pd.ExcelWriter(join(output_dir, 'features_average.xlsx'))
     for df in Dfs:
         # Get unique well ids
         well_id = sorted(set(re.search(r"\d+", i).group() for i in df.columns.values))
@@ -89,13 +78,31 @@ def aggregate_wells(output_dir):
         # Create a empty dataframe
         e_df = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
         # Fill empty values with 0
-
+        e_df.fillna(0)
 
         # Calculate avergage
         for c in df.columns.values:
             e_df[c[1:]][c[0]] = df[c].mean()
 
-        e_df.to_excel(writer, sheet_name = sheet_names[count], header=True, index=True)
+        e_df.to_excel(writer, sheet_name=sheet_names[count], header=True, index=True)
         count += 1
     writer.save()
+
+
+def aggregate_wells(output_dir):
+    fname = join(output_dir, 'aggregated_features.xlsx')
+    wb = openpyxl.load_workbook(filename=fname, data_only=True)
+
+    # Extract sheets
+    peaks = wb['Peaks']
+    amplitude = wb['Amplitude']
+    auc = wb['Auc']
+    # Declare global sheet names
+    global sheet_names
+    sheet_names = ['Peaks', 'Amplitude', 'AUC']
+    sheets = [peaks, amplitude, auc]
+
+    Dfs = _xlsx_to_df(sheets)
+    _calculate_avg_wells(Dfs, output_dir)
+
 
