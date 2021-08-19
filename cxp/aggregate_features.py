@@ -34,9 +34,7 @@ def aggregate_features(output_dir):
                 peak_count[c[1]] = {'cell_id': r+1, c[0]: c[2]}
                 amplitude[c[1]] = {'cell_id': r+1, c[0]: c[3]}
                 auc[c[1]] = {'cell_id': r+1, c[0]: c[4]}
-                
-                
-    
+
     peaks_df = pd.DataFrame(peak_count).T
     peaks_df = peaks_df[peaks_df.columns.tolist()[-1:]+peaks_df.columns.tolist()[:-1]]
     
@@ -52,46 +50,52 @@ def aggregate_features(output_dir):
     writer.save()
 
 
-output_dir = '../test_files/output_features/'
-#aggregate_features(output_dir)
-#def aggregate_wells(output_dir):
-
-fname = '../test_files/output_features/aggregated_features.xlsx'
-writer = pd.ExcelWriter('../test_files/output_features/features_average.xlsx')
-wb = openpyxl.load_workbook(filename=fname, data_only=True)
-
-# Extract sheets
-peaks = wb['Peaks']
-amplitude = wb['Amplitude']
-auc = wb['Auc']
-
-
-# Convert to pandas
-columns = next(peaks.values)[0:]
-peaks = pd.DataFrame(peaks.values, columns=columns)
-# Drop the first row and column
-peaks = peaks.drop(0)
-peaks = peaks.drop(columns='cell_id')
-
-# temporary column fix
-cnames = [re.search("(.*_Timelapse_)([A-Z]\d+)", c).group(2) for c in peaks.columns.values]
-peaks.columns = cnames
+def _xlsx_to_df(sheets):
+    Dfs = []
+    for s in sheets:
+        # Convert to pandas
+        columns = next(s.values)[0:]
+        s = pd.DataFrame(s.values, columns=columns)
+        # Drop the first row and column
+        s = s.drop(0)
+        s = s.drop(columns='cell_id')
+        Dfs.append(s)
+    return Dfs
 
 
-# get the last well number
-well_id = sorted(set(re.search(r"\d+", i).group() for i in peaks.columns.values))
-well_name = sorted(set([re.search(r"[A-Za-z]+", n).group() for n in peaks.columns.values]))
+def aggregate_wells(output_dir):
+    fname = join(output_dir, 'aggregated_features.xlsx')
+    writer = pd.ExcelWriter(join(output_dir, 'features_average.xlsx'))
+    wb = openpyxl.load_workbook(filename=fname, data_only=True)
 
-# create an empty dataframe
-col_names = [str(i) for i in well_id]
-row_names = well_name
+    # Extract sheets
+    peaks = wb['Peaks']
+    amplitude = wb['Amplitude']
+    auc = wb['Auc']
+    sheet_names = ['Peaks', 'Amplitude', 'AUC']
+    sheets = [peaks, amplitude, auc]
 
-# Create a empty dataframe
-df = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
-df = df.fillna(0)
+    Dfs = _xlsx_to_df(sheets)
+    count = int(0)
+    for df in Dfs:
+        # Get unique well ids
+        well_id = sorted(set(re.search(r"\d+", i).group() for i in df.columns.values))
+        well_name = sorted(set([re.search(r"[A-Za-z]+", n).group() for n in df.columns.values]))
 
-for c in peaks.columns.values:
-    df[c[1:]][c[0]] = peaks[c].mean()
+        # create an empty dataframe
+        col_names = [str(i) for i in well_id]
+        row_names = well_name
 
-df.to_excel(writer, sheet_name ='Peaks', header=True, index=True)
-writer.save()
+        # Create a empty dataframe
+        e_df = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
+        # Fill empty values with 0
+
+
+        # Calculate avergage
+        for c in df.columns.values:
+            e_df[c[1:]][c[0]] = df[c].mean()
+
+        e_df.to_excel(writer, sheet_name = sheet_names[count], header=True, index=True)
+        count += 1
+    writer.save()
+
