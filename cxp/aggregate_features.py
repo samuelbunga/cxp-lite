@@ -88,8 +88,6 @@ def _calculate_avg_active_wells(Dfs, output_dir):
         for c in df.columns.values:
             avg_df[c[1:]][c[0]] = df[c].mean()
             active_df[c[1:]][c[0]] = len([a for a in df[c] if a > 0])
-
-
         avg_df.to_excel(avg_wells, sheet_name=sheet_names[count], header=True, index=True)
         active_df.to_excel(active_wells, sheet_name=sheet_names[count], header=True, index=True)
         count += 1
@@ -105,6 +103,7 @@ def aggregate_wells(output_dir):
     peaks = wb['Peaks']
     amplitude = wb['Amplitude']
     auc = wb['Auc']
+
     # Declare global sheet names
     global sheet_names
     sheet_names = ['Peaks', 'Amplitude', 'AUC']
