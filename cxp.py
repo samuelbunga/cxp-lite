@@ -15,7 +15,7 @@ from Tkinter import *
 import tifffile as tiff
 from ttk import Progressbar
 from collections import OrderedDict
-from cxp.aggregate_features import aggregate_features
+from cxp.aggregate_features import aggregate_features, aggregate_wells
 
 
 
@@ -527,7 +527,8 @@ def start():
                 errors = True
 
         # aggregate features
-        aggregate_features(output_dir)
+        aggregate_features(output_folder)
+        aggregate_wells(output_folder)
         progress['value'] = 70
         root.update_idletasks()
         time.sleep(1)
