@@ -10,7 +10,6 @@ from collections import defaultdict
 
 def aggregate_features(output_dir):
 
-
     writer = pd.ExcelWriter(join(output_dir, 'aggregated_features.xlsx'))
 
     # Read the input directory for outputs
@@ -53,16 +52,46 @@ def aggregate_features(output_dir):
     writer.save()
 
 
+output_dir = '../test_files/output_features/'
+#aggregate_features(output_dir)
 #def aggregate_wells(output_dir):
 
-#col_names = [str(i+1) for i in range(24)]
-#row_names = [str(i) for i in 'ABCDEFGHIJKLMNOP']
+fname = '../test_files/output_features/aggregated_features.xlsx'
+writer = pd.ExcelWriter('../test_files/output_features/features_average.xlsx')
+wb = openpyxl.load_workbook(filename=fname, data_only=True)
+
+# Extract sheets
+peaks = wb['Peaks']
+amplitude = wb['Amplitude']
+auc = wb['Auc']
+
+
+# Convert to pandas
+columns = next(peaks.values)[0:]
+peaks = pd.DataFrame(peaks.values, columns=columns)
+# Drop the first row and column
+peaks = peaks.drop(0)
+peaks = peaks.drop(columns='cell_id')
+
+# temporary column fix
+cnames = [re.search("(.*_Timelapse_)([A-Z]\d+)", c).group(2) for c in peaks.columns.values]
+peaks.columns = cnames
+
+
+# get the last well number
+well_id = sorted(set(re.search(r"\d+", i).group() for i in peaks.columns.values))
+well_name = sorted(set([re.search(r"[A-Za-z]+", n).group() for n in peaks.columns.values]))
+
+# create an empty dataframe
+col_names = [str(i) for i in well_id]
+row_names = well_name
 
 # Create a empty dataframe
-#df = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
-#df = df.fillna(0)
+df = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
+df = df.fillna(0)
 
-output_dir = sys.argv[1]
-print(output_dir)
-aggregate_features(output_dir)
+for c in peaks.columns.values:
+    df[c[1:]][c[0]] = peaks[c].mean()
 
+df.to_excel(writer, sheet_name ='Peaks', header=True, index=True)
+writer.save()
