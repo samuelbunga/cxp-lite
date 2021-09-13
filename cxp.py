@@ -12,14 +12,15 @@ import tkFileDialog
 import pandas as pd
 import Tkinter as tk
 from Tkinter import *
+from cxp import other
 import tifffile as tiff
 from ttk import Progressbar
 from collections import OrderedDict
 from cxp.aggregate_features import aggregate_features, aggregate_wells
 
 
-
-
+# Set Java home env variable
+other.set_java_home()
 
 def extract_timeseries(input_file, mask_file, output_dir, output_basename):
     # read image stack
