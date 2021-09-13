@@ -459,6 +459,8 @@ def selectOutputFolder():
         output_folder = os.path.realpath(selectedFolder)
         outputSelectedVar.set(output_folder)
 
+def selectPipeline():
+    pass
 
 def start():
     try:
@@ -566,7 +568,7 @@ xpadding = (10,5)
 root = tk.Tk()
 root.title('CXP')
 root.resizable(width=False, height=False)
-root.geometry('550x330')  # width x height
+root.geometry('550x360')  # width x height
 root.config(bg=bgColor)
 root.tk.call('wm', 'iconphoto', root._w, tk.PhotoImage(file=os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                                      'img', 'cellxpedite_logo.png')))
@@ -597,7 +599,7 @@ progress.grid(row=14, column=0, columnspan=10,sticky=W)
 
 
 # input file selection
-selectInFileBtn = Button(mainFrame, text='Select folder', command=selectInputFolder, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
+selectInFileBtn = Button(mainFrame, text='Input folder', command=selectInputFolder, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
 selectInFileBtn.grid(row=0, column=0, sticky=W)
 
 # label for selected folder
@@ -615,6 +617,16 @@ outputSelectedVar = StringVar()
 outputSelectedVar.set('')
 selectedOutputFileLabel = Label(mainFrame, textvariable=outputSelectedVar, bg=bgColor, font=font_filenames)
 selectedOutputFileLabel.grid(row=1, column=1, columnspan=5, sticky=W, padx=xpadding)
+
+# output file selection
+selectPipeBtn = Button(mainFrame, text='Pipeline file', command=selectPipeline, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
+selectPipeBtn.grid(row=2, column=0, sticky=W)
+
+# label for selected folder
+pipeSelectedVar = StringVar()
+pipeSelectedVar.set('')
+selectedPipeLabel = Label(mainFrame, textvariable=pipeSelectedVar, bg=bgColor, font=font_filenames)
+selectedPipeLabel.grid(row=2, column=1, columnspan=5, sticky=W, padx=xpadding)
 
 
 # analysis params
