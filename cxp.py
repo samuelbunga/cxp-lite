@@ -22,6 +22,7 @@ from cxp.aggregate_features import aggregate_features, aggregate_wells
 # Set Java home env variable
 other.set_java_home()
 
+
 def extract_timeseries(input_file, mask_file, output_dir, output_basename):
     # read image stack
     img_stack = tiff.imread(input_file)
@@ -460,8 +461,14 @@ def selectOutputFolder():
         output_folder = os.path.realpath(selectedFolder)
         outputSelectedVar.set(output_folder)
 
+
 def selectPipeline():
-    pass
+    selectedFolder = tkFileDialog.askopenfilename(initialdir='.')
+    if selectedFolder:
+        global pipe_file
+        pipe_file = os.path.realpath(selectedFolder)
+        pipeSelectedVar.set(pipe_file)
+
 
 def start():
     try:
@@ -474,6 +481,11 @@ def start():
         if input_folder == '' or input_folder == 'no folder selected':
             tkMessageBox.showwarning("Missing user input", "An input folder must be selected.")
             return
+
+        global pipe_file
+        # run cell profiler if mask files are not present
+        other.run_cell_profiler(pipe_file, input_folder)
+
         progress['value'] = 10
         root.update_idletasks()
         time.sleep(1)
