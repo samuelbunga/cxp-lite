@@ -19,16 +19,50 @@ def check_mask_file(wd):
     return True if len(img_files) >= 1 else False
 
 
+def _get_non_mask(wd):
+    img_files = [os.path.join(wd, f) for f in os.listdir(wd)
+                 if (os.path.isfile(os.path.join(wd, f))
+                     and re.search(r".*image_j.*", f))
+                 ]
+    print(img_files)
+    if len(img_files) >= 1:
+        outfile = open(os.path.join(wd, 'data.csv'), 'w')
+        with outfile as fh:
+            for i in img_files:
+                fh.write(i)
+        return os.path.join(wd, 'data.csv')
+
+
 def run_cell_profiler(pipe_file, input_folder):
     # BOOLEAN - True (mask file), False (No mask file)
-    result = check_mask_file(os.path.dirname(pipe_file))
-    if not result:
-        os.system("/Applications/CellProfiler-3.1.9.app/Contents/MacOS/cp -c -r -p " + pipe_file + " -i "+input_folder)
+    #result = check_mask_file(os.path.dirname(pipe_file))
+    run_image_j(input_folder)  # Check and run imageJ on tiff files
+    data_file = _get_non_mask(input_folder)
+    print(data_file)
+    #if not result:
+    if os.path.exists(data_file):
+        os.system("/Applications/CellProfiler-3.1.9.app/Contents/MacOS/cp -c -r -p " + pipe_file + " --file-list " \
+                  + data_file)
     else:
         return False
 
-def run_image_j():
 
+def run_image_j(wd):
+    img_files = [os.path.join(wd, f) for f in os.listdir(wd)
+                 if (os.path.isfile(os.path.join(wd, f))
+                     and not re.search(r".*image_j.*", f)
+                     and not re.search(r".*mask.*", f)) and re.search(r".*[tif|tiff]$", f)
+                 ]
+    for i in img_files:
+        input_file = os.path.basename(i.strip('\n'))
+        output_file = os.path.basename(i.strip('\n')).split('.')[0]+'_image_j.tiff'
+        os.system("java -Xmx4096m -jar /Applications/ImageJ.app/Contents/Java/ij.jar -ijpath /Applications/ImageJ.app \
+        -macro " + os.path.join(os.path.dirname(__file__), 'batch.ijm ') + os.path.join(wd, input_file) + '#' + \
+        os.path.join(wd, output_file))
+        # Move original files
+        os.makedirs(os.path.join(wd, 'original_images')) if not os.path.exists(os.path.join(wd, 'original_images')) \
+            else False
+        os.rename(os.path.join(wd, input_file),  os.path.join(wd, 'original_images', input_file))
 
 
 if __name__ == '__main__':

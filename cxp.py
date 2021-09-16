@@ -473,7 +473,6 @@ def selectPipeline():
 def start():
     try:
         global input_folder
-
         # disable start button to prevent multiple clicks
         startButton.config(state="disabled")
 
@@ -631,7 +630,7 @@ outputSelectedVar.set('')
 selectedOutputFileLabel = Label(mainFrame, textvariable=outputSelectedVar, bg=bgColor, font=font_filenames)
 selectedOutputFileLabel.grid(row=1, column=1, columnspan=5, sticky=W, padx=xpadding)
 
-# output file selection
+# Pipeline file
 selectPipeBtn = Button(mainFrame, text='Pipeline file', command=selectPipeline, highlightbackground=bgColor, font=font_buttons, width=btnWidth)
 selectPipeBtn.grid(row=2, column=0, sticky=W)
 
@@ -640,7 +639,6 @@ pipeSelectedVar = StringVar()
 pipeSelectedVar.set('')
 selectedPipeLabel = Label(mainFrame, textvariable=pipeSelectedVar, bg=bgColor, font=font_filenames)
 selectedPipeLabel.grid(row=2, column=1, columnspan=5, sticky=W, padx=xpadding)
-
 
 # analysis params
 firstk_label = Label(mainFrame, text="Start at frame", bg=bgColor, font=font_output)
