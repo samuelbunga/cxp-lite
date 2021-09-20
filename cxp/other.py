@@ -29,16 +29,15 @@ def _get_non_mask(wd):
         outfile = open(os.path.join(wd, 'data.csv'), 'w')
         with outfile as fh:
             for i in img_files:
-                fh.write(i)
+                fh.write(i+'\n')
         return os.path.join(wd, 'data.csv')
 
 
 def run_cell_profiler(pipe_file, input_folder):
     # BOOLEAN - True (mask file), False (No mask file)
-    #result = check_mask_file(os.path.dirname(pipe_file))
+    # result = check_mask_file(os.path.dirname(pipe_file))
     run_image_j(input_folder)  # Check and run imageJ on tiff files
     data_file = _get_non_mask(input_folder)
-    print(data_file)
     #if not result:
     if os.path.exists(data_file):
         os.system("/Applications/CellProfiler-3.1.9.app/Contents/MacOS/cp -c -r -p " + pipe_file + " --file-list " \
@@ -53,6 +52,7 @@ def run_image_j(wd):
                      and not re.search(r".*image_j.*", f)
                      and not re.search(r".*mask.*", f)) and re.search(r".*[tif|tiff]$", f)
                  ]
+
     for i in img_files:
         input_file = os.path.basename(i.strip('\n'))
         output_file = os.path.basename(i.strip('\n')).split('.')[0]+'_image_j.tiff'

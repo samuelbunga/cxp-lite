@@ -495,8 +495,7 @@ def start():
         img_files = [os.path.join(input_folder, f) for f in os.listdir(input_folder)
                      if (os.path.isfile(os.path.join(input_folder, f))
                          and f != '.DS_Store'
-                         and mask_suffix not in f
-                         and re.search(r".*.tif[f]?", f))
+                         and re.search(r".*image_j_mask.tiff", f))
                      ]
 
         # ensure input folder is not empty
@@ -507,8 +506,11 @@ def start():
         # match (img_stack, mask); ensure all mask files exist
         data = []
         for img_file in img_files:
-            img_filename, img_file_extension = os.path.splitext(img_file)
-            mask_file = img_filename + mask_suffix + mask_file_ext
+            #img_filename, img_file_extension = os.path.splitext(img_file)
+            #mask_file = img_filename + mask_suffix + mask_file_ext
+            mask_file = img_file
+            img_file = os.path.join(input_folder, 'original_images', os.path.basename(mask_file.split('_image_j_mask.tiff')[0]+'.tif'))
+
             if os.path.isfile(mask_file):
                 data.append((img_file, mask_file))
             else:
