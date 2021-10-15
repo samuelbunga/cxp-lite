@@ -25,7 +25,7 @@ def aggregate_features(output_dir):
         features_csv = [j for j in listdir(join(output_dir, f))
                         if re.search(r'.*features.csv', j)][0]
         features_df = pd.read_csv(join(output_dir, f, features_csv))
-        for r,c in features_df.iterrows() :
+        for r,c in features_df.iterrows():
             if c[1] in peak_count:
                 peak_count[c[1]].update({'cell_id': r+1, c[0]: c[2]})
                 amplitude[c[1]].update({'cell_id': r+1, c[0]: c[3]})

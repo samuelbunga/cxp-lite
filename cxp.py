@@ -457,7 +457,7 @@ def selectOutputFolder():
     selectedFolder = tkFileDialog.askdirectory(title="Select output folder", initialdir='.')
     if selectedFolder:
         global output_folder
-        output_folder = selectedFolder
+        output_folder = selectedFolder.replace(' ', r'\ ')
         output_folder = os.path.realpath(selectedFolder)
         outputSelectedVar.set(output_folder)
 
@@ -466,7 +466,7 @@ def selectPipeline():
     selectedFolder = tkFileDialog.askopenfilename(initialdir='.')
     if selectedFolder:
         global pipe_file
-        pipe_file = os.path.realpath(selectedFolder)
+        pipe_file = os.path.realpath(selectedFolder.replace(' ', '\ '))
         pipeSelectedVar.set(pipe_file)
 
 
