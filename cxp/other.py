@@ -63,7 +63,7 @@ def run_image_j(wd):
         input_file_fix = input_file.replace(" ", "_")
         os.rename(os.path.join(wd, input_file), os.path.join(wd, input_file_fix))
         input_file = input_file_fix
-        output_file = os.path.basename(i.strip('\n')).split('.')[0] + '_image_j.tiff'
+        output_file = os.path.basename(input_file.strip('\n')).split('.')[0] + '_image_j.tiff'
         os.system("java -Xmx4096m -jar /Applications/ImageJ.app/Contents/Java/ij.jar -ijpath /Applications/ImageJ.app \
         -macro " + os.path.join(os.path.dirname(__file__), 'batch.ijm ') + os.path.join(wd, input_file) + '#' + \
                   os.path.join(wd, output_file))
