@@ -60,7 +60,6 @@ def run_image_j(wd):
 
     for i in img_files:
         input_file = os.path.basename(i.strip('\n'))
-
         input_file_fix = input_file.replace(" ", "_")
         os.rename(os.path.join(wd, input_file), os.path.join(wd, input_file_fix))
         input_file = input_file_fix
