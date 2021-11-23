@@ -21,6 +21,7 @@ def aggregate_features(output_dir):
     peak_count = {}
     amplitude = {}
     auc = {}
+
     for f in output_dirs:
         features_csv = [j for j in listdir(join(output_dir, f))
                         if re.search(r'.*features.csv', j)][0]
@@ -64,6 +65,7 @@ def _xlsx_to_df(sheets):
 
 
 def _calculate_avg_active_wells(Dfs, output_dir):
+
     count = int(0)
     avg_wells = pd.ExcelWriter(join(output_dir, 'average_wells.xlsx'))
     active_wells = pd.ExcelWriter(join(output_dir, 'active_wells.xlsx'))
@@ -88,9 +90,30 @@ def _calculate_avg_active_wells(Dfs, output_dir):
         for c in df.columns.values:
             avg_df[c[1:]][c[0]] = df[c].mean()
             active_df[c[1:]][c[0]] = len([a for a in df[c] if a > 0])
+
         avg_df.to_excel(avg_wells, sheet_name=sheet_names[count], header=True, index=True)
         active_df.to_excel(active_wells, sheet_name=sheet_names[count], header=True, index=True)
         count += 1
+
+    total_neuron = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
+    # Fill empty values with 0
+    total_neuron.fillna(0)
+
+    peaks_df = Dfs[0]
+
+    for c in peaks_df.columns.values:
+        total_neuron[c[1:]][c[0]] = len([a for a in peaks_df[c] if a != None])
+
+    total_spikes = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
+    # Fill empty values with 0
+    total_spikes.fillna(0)
+
+    for c in peaks_df.columns.values:
+        total_spikes[c[1:]][c[0]] = sum([a for a in peaks_df[c] if a >= 0])
+
+    total_neuron.to_excel(active_wells, sheet_name='Total_neuron', header=True, index=True)
+    total_spikes.to_excel(active_wells, sheet_name='Total_spikes', header=True, index=True)
+
     avg_wells.save()
     active_wells.save()
 
