@@ -79,12 +79,12 @@ def _calculate_avg_active_wells(Dfs, output_dir):
     row_names = well_name
 
     # Total neuron
-    total_neuron = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
+    active_neuron = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
     # Fill empty values with 0
-    total_neuron.fillna(0)
+    active_neuron.fillna(0)
 
     for c in peaks_df.columns.values:
-        total_neuron[c[1:]][c[0]] = len([a for a in peaks_df[c] if a > 0])
+        active_neuron[c[1:]][c[0]] = len([a for a in peaks_df[c] if a > 0])
 
     # -----------------
 
@@ -130,7 +130,7 @@ def _calculate_avg_active_wells(Dfs, output_dir):
         for c in df.columns.values:
             avg_df[c[1:]][c[0]] = df[c].mean()
             if sheet_names[count] == 'Amplitude' or sheet_names[count] == 'AUC':
-                active_df[c[1:]][c[0]] = sum([a for a in df[c] if a > 0])/total_neuron[c[1:]][c[0]]
+                active_df[c[1:]][c[0]] = sum([a for a in df[c] if a > 0])/active_neuron[c[1:]][c[0]]
             else:
                 active_df[c[1:]][c[0]] = len([a for a in df[c] if a > 0])
 
@@ -140,8 +140,9 @@ def _calculate_avg_active_wells(Dfs, output_dir):
             active_df.to_excel(active_wells, sheet_name=sheet_names[count], header=True, index=True)
         count += 1
 
-    total_neuron.to_excel(active_wells, sheet_name='Active_neuron', header=True, index=True)
+    active_neuron.to_excel(active_wells, sheet_name='Active_neuron', header=True, index=True)
     total_spikes.to_excel(active_wells, sheet_name='Total_spikes', header=True, index=True)
+    total_spikes.to_excel(avg_wells, sheet_name='Total_spikes', header=True, index=True)
     avg_wells.save()
     active_wells.save()
 
