@@ -160,6 +160,7 @@ def find_peaks(x, min_peak_height=None, edge='rising', min_rel_height_neighbor=0
                 # keep peaks with the same height if kpsh is True
                 idel = idel | (ind >= ind[i] - min_peak_distance) & (ind <= ind[i] + min_peak_distance) & (
                     x[ind[i]] > x[ind] if keep_peaks_same_height else True)
+
                 idel[i] = 0  # Keep current peak
         # remove the small peaks and sort back the indexes by their occurrence
         ind = np.sort(ind[~idel])
