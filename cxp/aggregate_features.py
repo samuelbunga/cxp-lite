@@ -86,6 +86,30 @@ def _calculate_avg_active_wells(Dfs, output_dir):
     for c in peaks_df.columns.values:
         total_neuron[c[1:]][c[0]] = len([a for a in peaks_df[c] if a > 0])
 
+    # -----------------
+
+    # Total spikes
+    total_spikes = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
+    # Fill empty values with 0
+    total_spikes.fillna(0)
+
+    for c in peaks_df.columns.values:
+        total_spikes[c[1:]][c[0]] = sum([a for a in peaks_df[c] if a >= 0])
+
+    # active peaks
+    active_peaks = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
+    # Fill empty values with 0
+    active_peaks.fillna(0)
+
+    for c in peaks_df.columns.values:
+        peaks_counts = sum([a for a in peaks_df[c] if a > 0])
+        active_neurons = len([a for a in peaks_df[c] if a > 0])
+        if active_neurons == 0:
+            active_peaks[c[1:]][c[0]] = 0
+        else:
+            active_peaks[c[1:]][c[0]] = peaks_counts / float(active_neurons)
+    active_peaks.to_excel(active_wells, sheet_name='Active_peaks', header=True, index=True)
+
     for df in Dfs:
         # Get unique well ids
         well_id = sorted(set(re.search(r"\d+", i).group() for i in df.columns.values))
@@ -116,29 +140,7 @@ def _calculate_avg_active_wells(Dfs, output_dir):
             active_df.to_excel(active_wells, sheet_name=sheet_names[count], header=True, index=True)
         count += 1
 
-    # Total spikes
-    total_spikes = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
-    # Fill empty values with 0
-    total_spikes.fillna(0)
-
-    for c in peaks_df.columns.values:
-        total_spikes[c[1:]][c[0]] = sum([a for a in peaks_df[c] if a >= 0])
-
-    # active peaks
-    active_peaks = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
-    # Fill empty values with 0
-    active_peaks.fillna(0)
-
-    for c in peaks_df.columns.values:
-        peaks_counts = sum([a for a in peaks_df[c] if a > 0])
-        active_neurons = len([a for a in peaks_df[c] if a > 0])
-        if active_neurons == 0:
-            active_peaks[c[1:]][c[0]] = 0
-        else:
-            active_peaks[c[1:]][c[0]] = peaks_counts/float(active_neurons)
-
     total_neuron.to_excel(active_wells, sheet_name='Active_neuron', header=True, index=True)
-    active_peaks.to_excel(active_wells, sheet_name='Active_peaks', header=True, index=True)
     total_spikes.to_excel(active_wells, sheet_name='Total_spikes', header=True, index=True)
     avg_wells.save()
     active_wells.save()
