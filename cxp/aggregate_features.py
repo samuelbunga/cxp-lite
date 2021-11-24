@@ -80,11 +80,15 @@ def _calculate_avg_active_wells(Dfs, output_dir):
 
     # Total neuron
     active_neuron = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
+    total_neuron = pd.DataFrame(columns=col_names, index=row_names, dtype=float)
     # Fill empty values with 0
     active_neuron.fillna(0)
+    total_neuron.fillna(0)
 
     for c in peaks_df.columns.values:
         active_neuron[c[1:]][c[0]] = len([a for a in peaks_df[c] if a > 0])
+        total_neuron[c[1:]][c[0]] = len([a for a in peaks_df[c] if a >= 0])
+
 
     # -----------------
 
@@ -141,6 +145,7 @@ def _calculate_avg_active_wells(Dfs, output_dir):
         count += 1
 
     active_neuron.to_excel(active_wells, sheet_name='Active_neuron', header=True, index=True)
+    total_neuron.to_excel(avg_wells, sheet_name='Total_neuron', header=True, index=True)
     total_spikes.to_excel(active_wells, sheet_name='Total_spikes', header=True, index=True)
     total_spikes.to_excel(avg_wells, sheet_name='Total_spikes', header=True, index=True)
     avg_wells.save()
