@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
 
 import os
-import ttk
+
 import time
-import tkFont
+from tkinter import font
 import random
 import scipy.misc
 import numpy as np
-import tkMessageBox
-import tkFileDialog
 import pandas as pd
-import Tkinter as tk
-from Tkinter import *
+import tkinter as tk
+from tkinter import *
 from cxp import other
 import tifffile as tiff
-from ttk import Progressbar
+import tkinter.ttk
+from tkinter.ttk import Progressbar
 from collections import OrderedDict
 from cxp.aggregate_features import aggregate_features, aggregate_wells
 
