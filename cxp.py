@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-
 import time
 from tkinter import font
 import random
@@ -10,9 +9,12 @@ import numpy as np
 import pandas as pd
 import tkinter as tk
 from tkinter import *
+from tkinter import font
 from cxp import other
 import tifffile as tiff
 import tkinter.ttk
+from tkinter import filedialog
+from tkinter import messagebox
 from tkinter.ttk import Progressbar
 from collections import OrderedDict
 from cxp.aggregate_features import aggregate_features, aggregate_wells
@@ -445,7 +447,7 @@ def fix():
 # helper functions
 
 def selectInputFolder():
-    selectedFolder = tkFileDialog.askdirectory(title="Select input folder", initialdir='.')
+    selectedFolder = filedialog.askdirectory(title="Select input folder", initialdir='.')
     if selectedFolder:
         global input_folder
         input_folder = selectedFolder
@@ -454,7 +456,7 @@ def selectInputFolder():
 
 
 def selectOutputFolder():
-    selectedFolder = tkFileDialog.askdirectory(title="Select output folder", initialdir='.')
+    selectedFolder = filedialog.askdirectory(title="Select output folder", initialdir='.')
     if selectedFolder:
         global output_folder
         output_folder = selectedFolder.replace(' ', r'\ ')
@@ -463,7 +465,7 @@ def selectOutputFolder():
 
 
 def selectPipeline():
-    selectedFolder = tkFileDialog.askopenfilename(initialdir='.')
+    selectedFolder = filedialog.askopenfilename(initialdir='.')
     if selectedFolder:
         global pipe_file
         pipe_file = os.path.realpath(selectedFolder.replace(' ', '\ '))
@@ -478,7 +480,7 @@ def start():
 
         # ensure input folder is specified
         if input_folder == '' or input_folder == 'no folder selected':
-            tkMessageBox.showwarning("Missing user input", "An input folder must be selected.")
+            messagebox.showwarning("Missing user input", "An input folder must be selected.")
             return
 
         global pipe_file
@@ -500,7 +502,7 @@ def start():
 
         # ensure input folder is not empty
         if len(img_files) == 0:
-            tkMessageBox.showwarning("Missing data", "The input folder is empty.")
+            messagebox.showwarning("Missing data", "The input folder is empty.")
             return
 
         # match (img_stack, mask); ensure all mask files exist
@@ -514,7 +516,7 @@ def start():
             if os.path.isfile(mask_file):
                 data.append((img_file, mask_file))
             else:
-                tkMessageBox.showwarning("Missing data", "Missing mask file: \n\n" + mask_file)
+                messagebox.showwarning("Missing data", "Missing mask file: \n\n" + mask_file)
                 return
 
         # analyze each pair of files (img stack, mask)
@@ -556,11 +558,11 @@ def start():
         if errors:
             output_status = 'Complete'
             output_message = 'Data extraction completed, but some files could not be analyzed.'
-            tkMessageBox.showwarning(output_status, output_message)
+            messagebox.showwarning(output_status, output_message)
         else:
             output_status = 'Success'
             output_message = 'Data extraction completed successfully.'
-            tkMessageBox.showinfo(output_status, output_message)
+            messagebox.showinfo(output_status, output_message)
             progress.stop()
 
 
@@ -568,7 +570,7 @@ def start():
         # display error to user and console
         import traceback
         print(traceback.format_exc())
-        tkMessageBox.showwarning("Error", "An error occured during the analysis:\n\n" + str(e))
+        messagebox.showwarning("Error", "An error occured during the analysis:\n\n" + str(e))
     finally:
         startButton.config(state="normal")
 
@@ -587,10 +589,11 @@ root.config(bg=bgColor)
 root.tk.call('wm', 'iconphoto', root._w, tk.PhotoImage(file=os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                                      'img', 'cellxpedite_logo.png')))
 # fonts
-font_buttons = tkFont.Font(root=root, family='Arial', size=14, weight='bold')
-font_labels = tkFont.Font(root=root, family='Arial', size=14, weight='bold')
-font_output = tkFont.Font(root=root, family='Arial', size=14)
-font_filenames = tkFont.Font(root=root, family='Arial', size=12)
+font_buttons = font.Font(root=root, family='Arial', size=14, weight='bold')
+font_labels = font.Font(root=root, family='Arial', size=14, weight='bold')
+font_output = font.Font(root=root, family='Arial', size=14)
+font_filenames = font.Font(root=root, family='Arial', size=12)
+
 
 # MAIN FRAME
 mainFrame = Frame(root, bg=bgColor, padx=10, pady=10)
@@ -599,7 +602,7 @@ mainFrame = Frame(root, bg=bgColor, padx=10, pady=10)
 
 # Progress bar widget
 # Set Progressbar style
-s = ttk.Style()
+s = tkinter.ttk.Style()
 s.theme_use('clam')
 s.configure("neon.Horizontal.TProgressbar", foreground='#39FF14', background='#39FF14')
 progress = Progressbar(mainFrame,
