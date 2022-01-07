@@ -1,6 +1,7 @@
 import re
 import sys
 import csv
+import numpy as np
 import openpyxl
 import pandas as pd
 from os import listdir
@@ -9,7 +10,6 @@ from collections import defaultdict
 
 
 def aggregate_features(output_dir):
-
     writer = pd.ExcelWriter(join(output_dir, 'aggregated_features.xlsx'))
 
     # Read the input directory for outputs
@@ -26,28 +26,28 @@ def aggregate_features(output_dir):
         features_csv = [j for j in listdir(join(output_dir, f))
                         if re.search(r'.*features.csv', j)][0]
         features_df = pd.read_csv(join(output_dir, f, features_csv))
-        for r,c in features_df.iterrows():
+        for r, c in features_df.iterrows():
             if c[1] in peak_count:
-                peak_count[c[1]].update({'cell_id': r+1, c[0]: c[2]})
-                amplitude[c[1]].update({'cell_id': r+1, c[0]: c[3]})
-                auc[c[1]].update({'cell_id': r+1, c[0]: c[4]})
+                peak_count[c[1]].update({'cell_id': r + 1, c[0]: c[2]})
+                amplitude[c[1]].update({'cell_id': r + 1, c[0]: c[3]})
+                auc[c[1]].update({'cell_id': r + 1, c[0]: c[4]})
             else:
-                peak_count[c[1]] = {'cell_id': r+1, c[0]: c[2]}
-                amplitude[c[1]] = {'cell_id': r+1, c[0]: c[3]}
-                auc[c[1]] = {'cell_id': r+1, c[0]: c[4]}
+                peak_count[c[1]] = {'cell_id': r + 1, c[0]: c[2]}
+                amplitude[c[1]] = {'cell_id': r + 1, c[0]: c[3]}
+                auc[c[1]] = {'cell_id': r + 1, c[0]: c[4]}
 
     peaks_df = pd.DataFrame(peak_count).T
-    peaks_df = peaks_df[peaks_df.columns.tolist()[-1:]+peaks_df.columns.tolist()[:-1]]
-    
+    # peaks_df = peaks_df[peaks_df.columns.tolist()[-1:]+peaks_df.columns.tolist()[:-1]]
+
     amplitude_df = pd.DataFrame(amplitude).T
-    amplitude_df = amplitude_df[amplitude_df.columns.tolist()[-1:]+amplitude_df.columns.tolist()[:-1]]
-    
+    # amplitude_df = amplitude_df[amplitude_df.columns.tolist()[-1:]+amplitude_df.columns.tolist()[:-1]]
+
     auc_df = pd.DataFrame(auc).T
-    auc_df = auc_df[auc_df.columns.tolist()[-1:]+auc_df.columns.tolist()[:-1]]
-    
-    peaks_df.to_excel(writer, sheet_name ='Peaks', header=True, index=False)
-    amplitude_df.to_excel(writer, sheet_name ='Amplitude', header=True, index=False)
-    auc_df.to_excel(writer, sheet_name ='Auc', header=True, index=False)
+    # auc_df = auc_df[auc_df.columns.tolist()[-1:]+auc_df.columns.tolist()[:-1]]
+
+    peaks_df.to_excel(writer, sheet_name='Peaks', header=True, index=False)
+    amplitude_df.to_excel(writer, sheet_name='Amplitude', header=True, index=False)
+    auc_df.to_excel(writer, sheet_name='Auc', header=True, index=False)
     writer.save()
 
 
@@ -60,12 +60,12 @@ def _xlsx_to_df(sheets):
         # Drop the first row and column
         s = s.drop(0)
         s = s.drop(columns='cell_id')
+        s.fillna(value=np.nan, inplace=True)
         Dfs.append(s)
     return Dfs
 
 
 def _calculate_avg_active_wells(Dfs, output_dir):
-
     peaks_df = Dfs[0]
     count = int(0)
     avg_wells = pd.ExcelWriter(join(output_dir, 'average_wells.xlsx'))
@@ -84,11 +84,10 @@ def _calculate_avg_active_wells(Dfs, output_dir):
     # Fill empty values with 0
     active_neuron.fillna(0)
     total_neuron.fillna(0)
-
+    print(peaks_df)
     for c in peaks_df.columns.values:
         active_neuron[c[1:]][c[0]] = len([a for a in peaks_df[c] if a > 0])
         total_neuron[c[1:]][c[0]] = len([a for a in peaks_df[c] if a >= 0])
-
 
     # -----------------
 
@@ -134,7 +133,7 @@ def _calculate_avg_active_wells(Dfs, output_dir):
         for c in df.columns.values:
             avg_df[c[1:]][c[0]] = df[c].mean()
             if sheet_names[count] == 'Amplitude' or sheet_names[count] == 'AUC':
-                active_df[c[1:]][c[0]] = sum([a for a in df[c] if a > 0])/active_neuron[c[1:]][c[0]]
+                active_df[c[1:]][c[0]] = sum([a for a in df[c] if a > 0]) / active_neuron[c[1:]][c[0]]
             else:
                 active_df[c[1:]][c[0]] = len([a for a in df[c] if a > 0])
 
