@@ -2,9 +2,9 @@
 
 import os
 import time
+import imageio
 from tkinter import font
 import random
-import scipy.misc
 import numpy as np
 import pandas as pd
 import tkinter as tk
@@ -31,7 +31,7 @@ def extract_timeseries(input_file, mask_file, output_dir, output_basename):
     img_stack = np.moveaxis(img_stack, 0, -1)
 
     # read mask
-    mask = scipy.misc.imread(mask_file)
+    mask = imageio.imread(mask_file)
 
     # map (ob_num-->points)
     d = {}
@@ -536,11 +536,13 @@ def start():
                                                                                output_dir,
                                                                                output_basename)
 
+
                 # compute time series features
                 df_features = extractFeatures(fragmentsTimeSeries, background_intensity, output_dir, output_basename)
 
                 # save df_features
                 df_features.to_csv(os.path.join(output_dir, output_basename + "_features.csv"), index=False)
+
             except:
                 errors = True
 
