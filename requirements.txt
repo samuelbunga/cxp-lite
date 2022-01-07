@@ -1,9 +1,0 @@
-matplotlib
-numpy
-opencv-python
-pandas
-Pillow
-scipy
-tifffile
-openpyxl
-tk
