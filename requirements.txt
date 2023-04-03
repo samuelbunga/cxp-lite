@@ -2,3 +2,4 @@ pandas
 imageio
 openpyxl
 tifffile
+cellprofiler
