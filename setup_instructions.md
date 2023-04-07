@@ -17,9 +17,13 @@ This above step will take several minutes . . .
 
 
 Step 2: (RUN THESE BELOW COMMANDS EVERYTIME YOU WANT TO LAUNCH CXP-LITE)
+
 1.) open -a xquartz
+
 2.) IP=$(ifconfig en0 | grep inet | awk '$1=="inet" {print $2}')
+
 3.) export DISPLAY=$IP:0
+
 4.) docker run --rm -e DISPLAY=$IP:0 -v /tmp/.X11-unix:/tmp/.X11-unix --mount type=bind,source="$HOME",target=/user_home cxp
 
 
