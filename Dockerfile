@@ -57,7 +57,7 @@ RUN conda create --name cxplite python=3.8
 RUN conda install -y -n cxplite pandas imageio pandas tifffile openpyxl
 
 
-RUN cd CellProfiler-4.2.5 && conda run -n cxplite pip3 install .
+#RUN cd CellProfiler-4.2.5 && conda run -n cxplite pip3 install .
 
 RUN mkdir /user_home
 WORKDIR /user_home
