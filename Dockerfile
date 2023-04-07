@@ -63,7 +63,7 @@ RUN cd CellProfiler-4.2.5 && conda run -n cxplite pip3 install .
 # IP=$(ifconfig en0 | grep inet | awk '$1=="inet" {print $2}')
 # export DISPLAY=$IP:0
 
-# docker run --rm -it -e DISPLAY=$IP:0 -v /tmp/.X11-unix:/tmp/.X11-unix --mount type=bind,source="$HOME",target=/data  cxp
+# docker run --rm -it -e DISPLAY=$IP:0 -v /tmp/.X11-unix:/tmp/.X11-unix --mount type=bind,source="$HOME",target=/home  cxp
 
 
 
