@@ -62,7 +62,7 @@ RUN cd CellProfiler-4.2.5 && conda run -n cxplite pip3 install .
 RUN mkdir /user_home
 WORKDIR /user_home
 
-#CMD ["conda run -n cxplite python /build/cxp-lite-master/cxp.py"]
+
 
 # brew install xquartz
 # open -a xquartz
