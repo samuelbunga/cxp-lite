@@ -39,6 +39,8 @@ RUN wget -nv \
 	&& bash Miniconda3-py37_4.10.3-Linux-x86_64.sh -b -p /root/miniconda3 \
 	&& rm -f Miniconda3-py37_4.10.3-Linux-x86_64.sh
 
+RUN wget --no-check-certificate https://github.com/samuelbunga/cxp-lite/archive/refs/heads/master.zip
+RUN unzip master.zip
 
 RUN wget --no-check-certificate https://github.com/CellProfiler/CellProfiler/archive/refs/tags/v4.2.5.zip
 
@@ -57,13 +59,17 @@ RUN conda install -y -n cxplite pandas imageio pandas tifffile openpyxl
 
 RUN cd CellProfiler-4.2.5 && conda run -n cxplite pip3 install .
 
+RUN mkdir /home
+WORKDIR /home
+
+CMD ["conda run -n cxplite python /build/cxp-lite-master/cxp.py"]
 
 # brew install xquartz
 # open -a xquartz
 # IP=$(ifconfig en0 | grep inet | awk '$1=="inet" {print $2}')
 # export DISPLAY=$IP:0
 
-# docker run --rm -it -e DISPLAY=$IP:0 -v /tmp/.X11-unix:/tmp/.X11-unix --mount type=bind,source="$HOME",target=/home  cxp
+# docker run --rm -it -e DISPLAY=$IP:0 -v /tmp/.X11-unix:/tmp/.X11-unix --mount type=bind,source="$HOME",target=/home cxp
 
 
 
