@@ -44,7 +44,7 @@ def run_cell_profiler(pipe_file, input_folder):
     data_file = _get_non_mask(input_folder)
     # if not result:
     if os.path.exists(data_file) and data_file:
-        os.system("/Applications/CellProfiler-3.1.9.app/Contents/MacOS/cp -c -r -p " + pipe_file + " --file-list " \
+        os.system("cellprofiler -c -r -p " + pipe_file + " --file-list " \
                   + data_file)
     else:
         return False
@@ -64,7 +64,8 @@ def run_image_j(wd):
         os.rename(os.path.join(wd, input_file), os.path.join(wd, input_file_fix))
         input_file = input_file_fix
         output_file = os.path.basename(input_file.strip('\n')).split('.')[0] + '_image_j.tiff'
-        os.system("java -Xmx4096m -jar /Applications/ImageJ.app/Contents/Java/ij.jar -ijpath /Applications/ImageJ.app \
+        #os.system("java -Xmx4096m -jar /Applications/ImageJ.app/Contents/Java/ij.jar -ijpath /Applications/ImageJ.app \
+        os.system("/build/ImageJ/ImageJ \
         -macro " + os.path.join(os.path.dirname(__file__), 'batch.ijm ') + os.path.join(wd, input_file) + '#' + \
                   os.path.join(wd, output_file))
         # Move original files

@@ -48,7 +48,7 @@ def aggregate_features(output_dir):
     peaks_df.to_excel(writer, sheet_name='Peaks', header=True, index=False)
     amplitude_df.to_excel(writer, sheet_name='Amplitude', header=True, index=False)
     auc_df.to_excel(writer, sheet_name='Auc', header=True, index=False)
-    writer.save()
+    writer.close()
 
 
 def _xlsx_to_df(sheets):
@@ -84,7 +84,7 @@ def _calculate_avg_active_wells(Dfs, output_dir):
     # Fill empty values with 0
     active_neuron.fillna(0)
     total_neuron.fillna(0)
-    print(peaks_df)
+
     for c in peaks_df.columns.values:
         active_neuron[c[1:]][c[0]] = len([a for a in peaks_df[c] if a > 0])
         total_neuron[c[1:]][c[0]] = len([a for a in peaks_df[c] if a >= 0])
@@ -147,8 +147,8 @@ def _calculate_avg_active_wells(Dfs, output_dir):
     total_neuron.to_excel(avg_wells, sheet_name='Total_neuron', header=True, index=True)
     total_spikes.to_excel(active_wells, sheet_name='Total_spikes', header=True, index=True)
     total_spikes.to_excel(avg_wells, sheet_name='Total_spikes', header=True, index=True)
-    avg_wells.save()
-    active_wells.save()
+    avg_wells.close()
+    active_wells.close()
 
 
 def aggregate_wells(output_dir):

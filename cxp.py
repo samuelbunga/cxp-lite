@@ -2,7 +2,7 @@
 
 import os
 import time
-import imageio
+import imageio.v2 as imageio
 from tkinter import font
 import random
 import numpy as np
