@@ -59,8 +59,8 @@ RUN conda install -y -n cxplite pandas imageio pandas tifffile openpyxl
 
 RUN cd CellProfiler-4.2.5 && conda run -n cxplite pip3 install .
 
-RUN mkdir /home
-WORKDIR /home
+RUN mkdir /user_home
+WORKDIR /user_home
 
 CMD ["conda run -n cxplite python /build/cxp-lite-master/cxp.py"]
 
@@ -69,7 +69,7 @@ CMD ["conda run -n cxplite python /build/cxp-lite-master/cxp.py"]
 # IP=$(ifconfig en0 | grep inet | awk '$1=="inet" {print $2}')
 # export DISPLAY=$IP:0
 
-# docker run --rm -it -e DISPLAY=$IP:0 -v /tmp/.X11-unix:/tmp/.X11-unix --mount type=bind,source="$HOME",target=/home cxp
+# docker run --rm -it -e DISPLAY=$IP:0 -v /tmp/.X11-unix:/tmp/.X11-unix --mount type=bind,source="$HOME",target=/user_home cxp
 
 
 
